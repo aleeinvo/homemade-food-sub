@@ -3,6 +3,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const validationHandle = require('./middlewares/validationHandle');
+const validJWT = require('./middlewares/validJWT');
+const isAdmin = require('./middlewares/isAdmin');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -16,25 +19,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/users', [
+    validJWT,
+    isAdmin
+]);
 app.use('/users', usersRouter);
 
-app.use((error, req, res, next) => {
-    if(error.name === 'SequelizeValidationError') {
-        const errors = {};
-        error.errors.forEach(e => {
-            if(!errors[e.path]) {
-                errors[e.path] = [];
-            }
-
-            errors[e.path].push(e.message);
-        });
-        return res.status(422).json({
-            message: 'Please fix the following validation errors',
-            errors
-        })
-    } else {
-        next(error);
-    }
-})
+app.use(validationHandle);
 
 module.exports = app;

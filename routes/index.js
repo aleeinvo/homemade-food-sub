@@ -6,5 +6,6 @@ var router = express.Router();
 router.get('/', homeController.index);
 
 router.post('/register', authController.register);
+router.post('/login', authController.login);
 
 module.exports = router;
