@@ -1,7 +1,8 @@
-const home = require('./home');
-const user = require('./user');
-
+const homeController = require('./home');
+const userController = require('./user');
+const authController = require('./auth');
 module.exports = {
-    home,
-    user
+    homeController,
+    userController,
+    authController
 }
